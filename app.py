@@ -2,10 +2,9 @@ import copy
 from dataclasses import dataclass
 
 import gradio as gr
-import numpy as np
-import PIL
 import PIL.Image
 import torch
+from gradio_editor3d import Editor3D as g3deditor
 
 from loosecontrol import LooseControlNet
 
@@ -126,7 +125,7 @@ with gr.Blocks(css=css) as demo:
         should_edit = gr.Checkbox(label="Lock style", elem_id="edit")
 
     with gr.Row():
-        image_input = gr.Image(elem_id="image_input", type="pil")
+        image_input = g3deditor(elem_id="image_input")
 
     with gr.Row():
         image_output = gr.Image(elem_id="image_output", type="pil")
