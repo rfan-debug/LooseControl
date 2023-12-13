@@ -29,8 +29,9 @@ def attach_loaders_mixin(model):
     """
     # mixin_instance = UNet2DConditionLoadersMixin()
     for attr_name, attr_value in vars(UNet2DConditionLoadersMixin).items():
-        # print(attr_name)
+        print(attr_name, attr_value)
         if callable(attr_value):
+            print("Callable:", attr_name, attr_value)
             # setattr(model, attr_name, functools.partialmethod(attr_value, model).__get__(model, model.__class__))
             setattr(model, attr_name, functools.partial(attr_value, model))
     return model
@@ -66,6 +67,7 @@ class ControlNetX(ControlNetModel, UNet2DConditionLoadersMixin):
 
         def fn_recursive_add_processors(name: str, module: torch.nn.Module, processors: Dict[str, AttentionProcessor]):
             if hasattr(module, "get_processor"):
+                print("module with get_processor", name)
                 processors[f"{name}.processor"] = module.get_processor(return_deprecated_lora=True)
 
             for sub_name, child in module.named_children():
