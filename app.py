@@ -126,7 +126,7 @@ with gr.Blocks(css=css) as demo:
         should_edit = gr.Checkbox(label="Lock style", elem_id="edit")
 
     with gr.Row():
-        image_input = gr.Model3D(elem_id="image_input")
+        image_input = gr.Image(elem_id="image_input", type="pil")
 
     with gr.Row():
         image_output = gr.Image(elem_id="image_output", type="pil")
