@@ -29,7 +29,13 @@ class FixedInputs:
 negative_prompt = "blurry, text, caption, lowquality, lowresolution, low res, grainy, ugly"
 def depth2image(prompt, seed, depth):
     seed = int(seed)
-    gen = cn(prompt, control_image=depth, controlnet_conditioning_scale=1.0, generator=torch.Generator().manual_seed(seed), num_inference_steps=20, negative_prompt=negative_prompt)
+    gen = cn(prompt,
+             control_image=depth,
+             controlnet_conditioning_scale=1.0,
+             generator=torch.Generator().manual_seed(seed),
+             num_inference_steps=20,
+             negative_prompt=negative_prompt
+             )
     return gen
 
 def edit_previous(prompt, seed, depth, fixed_inputs):

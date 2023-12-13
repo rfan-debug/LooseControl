@@ -76,11 +76,18 @@ class ControlNetX(ControlNetModel, UNet2DConditionLoadersMixin):
         return processors
 
 class ControlNetPipeline:
-    def __init__(self, checkpoint="lllyasviel/control_v11f1p_sd15_depth", sd_checkpoint="runwayml/stable-diffusion-v1-5") -> None:
+    def __init__(self,
+                 checkpoint="lllyasviel/control_v11f1p_sd15_depth",
+                 sd_checkpoint="runwayml/stable-diffusion-v1-5"
+                 ) -> None:
         controlnet = ControlNetX.from_pretrained(checkpoint)
         self.pipe = StableDiffusionControlNetPipeline.from_pretrained(
-                        sd_checkpoint, controlnet=controlnet, requires_safety_checker=False, safety_checker=None,
-                        torch_dtype=torch.float16)
+            sd_checkpoint,
+            controlnet=controlnet,
+            requires_safety_checker=False,
+            safety_checker=None,
+            torch_dtype=torch.float16
+        )
         self.pipe.scheduler = UniPCMultistepScheduler.from_config(self.pipe.scheduler.config)
 
     @torch.no_grad()
@@ -107,7 +114,11 @@ class ControlNetPipeline:
 
 
 class LooseControlNet(ControlNetPipeline):
-    def __init__(self, loose_control_weights="shariqfarooq/loose-control-3dbox", cn_checkpoint="lllyasviel/control_v11f1p_sd15_depth", sd_checkpoint="runwayml/stable-diffusion-v1-5") -> None:
+    def __init__(self,
+                 loose_control_weights="shariqfarooq/loose-control-3dbox",
+                 cn_checkpoint="lllyasviel/control_v11f1p_sd15_depth",
+                 sd_checkpoint="runwayml/stable-diffusion-v1-5"
+                 ) -> None:
         super().__init__(cn_checkpoint, sd_checkpoint)
         self.pipe.controlnet = attach_loaders_mixin(self.pipe.controlnet)
         self.pipe.controlnet.load_attn_procs(loose_control_weights)
