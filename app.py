@@ -1,20 +1,20 @@
-import gradio as gr
+import copy
 from dataclasses import dataclass
+
+import gradio as gr
+import numpy as np
 import PIL
 import PIL.Image
-
 import torch
-import numpy as np
-import copy
+
 from loosecontrol import LooseControlNet
 
-
-device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 cn = LooseControlNet()
 cn.pipe = cn.pipe.to(torch_device=device, torch_dtype=torch.float16)
 
 # Need to figure out a better way how to do this per user, making 'cf attention' act like a state per user.
-# For now, we just copy the model. 
+# For now, we just copy the model.
 cn_with_cf = copy.deepcopy(cn)
 cn_with_cf.set_cf_attention()
 
@@ -27,16 +27,20 @@ class FixedInputs:
 
 
 negative_prompt = "blurry, text, caption, lowquality, lowresolution, low res, grainy, ugly"
+
+
 def depth2image(prompt, seed, depth):
     seed = int(seed)
-    gen = cn(prompt,
-             control_image=depth,
-             controlnet_conditioning_scale=1.0,
-             generator=torch.Generator().manual_seed(seed),
-             num_inference_steps=20,
-             negative_prompt=negative_prompt
-             )
+    gen = cn(
+        prompt,
+        control_image=depth,
+        controlnet_conditioning_scale=1.0,
+        generator=torch.Generator().manual_seed(seed),
+        num_inference_steps=20,
+        negative_prompt=negative_prompt,
+    )
     return gen
+
 
 def edit_previous(prompt, seed, depth, fixed_inputs):
     seed = int(seed)
@@ -44,13 +48,21 @@ def edit_previous(prompt, seed, depth, fixed_inputs):
     prompt = [fixed_inputs.prompt, prompt]
     neg_prompt = [negative_prompt, negative_prompt]
     generator = [torch.Generator().manual_seed(fixed_inputs.seed), torch.Generator().manual_seed(seed)]
-    gen = cn_with_cf(prompt, control_image=control_image, controlnet_conditioning_scale=1.0, generator=generator, num_inference_steps=20, negative_prompt=neg_prompt)[-1]
+    gen = cn_with_cf(
+        prompt,
+        control_image=control_image,
+        controlnet_conditioning_scale=1.0,
+        generator=generator,
+        num_inference_steps=20,
+        negative_prompt=neg_prompt,
+    )[-1]
     return gen
+
 
 def run(prompt, seed, depth, should_edit, fixed_inputs):
     depth = depth.convert("RGB")
     # all values below [3,3,3] in depth should actually be set to [255,255,255]
-    # This is to due the nature of training data and is experimental right now. 
+    # This is to due the nature of training data and is experimental right now.
     # Not in use for now.
     # depth = np.array(depth)
     # depth[depth < 3] = 255
@@ -61,7 +73,8 @@ def run(prompt, seed, depth, should_edit, fixed_inputs):
         return edit_previous(prompt, seed, depth, fixed_inputs)
     else:
         return depth2image(prompt, seed, depth)
-    
+
+
 def handle_edit_change(edit, prompt, seed, image_input, fixed_inputs):
     if edit:
         fixed_inputs[0] = FixedInputs(prompt, int(seed), image_input)
@@ -74,7 +87,7 @@ css = """
 
 #image_output {
 width: 512px;
-height: 512px; 
+height: 512px;
 """
 
 
@@ -96,12 +109,11 @@ instructions_editor3d = """
 - Use the 'Toggle Mode' to switch between "normal" and "depth" mode. Final image sent to the model should be in "depth" mode.
 - Use the 'Render' button to render the scene and send it to the model for generation.
 
-### Lock style checkbox - Fixes the style of the latest generated image. 
+### Lock style checkbox - Fixes the style of the latest generated image.
 This allows users to edit the 3D boxes without changing the style of the generated image. This is useful when the user is satisfied with the style/content of the generated image and wants to edit the 3D boxes without changing the overall essence of the scene.
 It can be used to create stop motion videos like those shown [here](https://shariqfarooq123.github.io/loose-control/).
 
 """
-
 
 
 with gr.Blocks(css=css) as demo:
@@ -112,19 +124,18 @@ with gr.Blocks(css=css) as demo:
         prompt = gr.Textbox(label="Prompt", placeholder="Write your prompt", elem_id="input")
         seed = gr.Textbox(value=42, label="Seed", elem_id="seed")
         should_edit = gr.Checkbox(label="Lock style", elem_id="edit")
-    
+
     with gr.Row():
         image_input = gr.Model3D(elem_id="image_input")
-    
-    with gr.Row():
-        image_output = gr.Image(elem_id="image_output", type='pil')
 
-    should_edit.change(fn=handle_edit_change, inputs=[should_edit, prompt, seed, image_input, fixed_inputs], outputs=[fixed_inputs])
+    with gr.Row():
+        image_output = gr.Image(elem_id="image_output", type="pil")
+
+    should_edit.change(
+        fn=handle_edit_change, inputs=[should_edit, prompt, seed, image_input, fixed_inputs], outputs=[fixed_inputs]
+    )
     image_input.change(fn=run, inputs=[prompt, seed, image_input, should_edit, fixed_inputs], outputs=[image_output])
     with gr.Accordion("Instructions"):
         gr.Markdown(instructions_editor3d)
 
 demo.queue().launch()
-
-
-
