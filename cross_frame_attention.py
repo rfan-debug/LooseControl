@@ -2,16 +2,12 @@
 import torch
 from einops import rearrange
 
+
 class CrossFrameAttnProcessor:
     def __init__(self, unet_chunk_size=2):
         self.unet_chunk_size = unet_chunk_size
 
-    def __call__(
-            self,
-            attn,
-            hidden_states,
-            encoder_hidden_states=None,
-            attention_mask=None, **kwargs):
+    def __call__(self, attn, hidden_states, encoder_hidden_states=None, attention_mask=None, **kwargs):
         batch_size, sequence_length, _ = hidden_states.shape
         attention_mask = attn.prepare_attention_mask(attention_mask, sequence_length, batch_size)
         query = attn.to_q(hidden_states)
@@ -51,7 +47,6 @@ class CrossFrameAttnProcessor:
         hidden_states = attn.to_out[1](hidden_states)
 
         return hidden_states
-    
 
 
 class AttnProcessorX:

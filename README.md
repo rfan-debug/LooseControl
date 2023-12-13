@@ -1,11 +1,11 @@
 # LooseControl: Lifting ControlNet for Generalized Depth Conditioning
 [![Open in Spaces](https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-sm.svg)](https://huggingface.co/spaces/shariqfarooq/LooseControl)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) ![PyTorch](https://img.shields.io/badge/PyTorch_v1.10.1-EE4C2C?&logo=pytorch&logoColor=white) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) ![PyTorch](https://img.shields.io/badge/PyTorch_v1.10.1-EE4C2C?&logo=pytorch&logoColor=white)
 
 This is the official repository for our paper:
 >#### [LooseControl: Lifting ControlNet for Generalized Depth Conditioning](#)
-> ##### [Shariq Farooq Bhat](https://shariqfarooq123.github.io), [Niloy J. Mitra](http://www0.cs.ucl.ac.uk/staff/n.mitra/), [Peter Wonka](http://peterwonka.net/) 
+> ##### [Shariq Farooq Bhat](https://shariqfarooq123.github.io), [Niloy J. Mitra](http://www0.cs.ucl.ac.uk/staff/n.mitra/), [Peter Wonka](http://peterwonka.net/)
 
 
 [[Project Page]](https://shariqfarooq123.github.io/loose-control/) [[Paper]](https://arxiv.org/abs/2312.03079) [[Demo 🤗]](https://huggingface.co/spaces/shariqfarooq/LooseControl) [[Weights (3D Box Control)]](https://huggingface.co/shariqfarooq/loose-control-3dbox)
@@ -55,7 +55,7 @@ The Cross Frame attention is adapted from [Text2Video-Zero](https://github.com/P
 
 ```bibtex
 @misc{bhat2023loosecontrol,
-      title={LooseControl: Lifting ControlNet for Generalized Depth Conditioning}, 
+      title={LooseControl: Lifting ControlNet for Generalized Depth Conditioning},
       author={Shariq Farooq Bhat and Niloy J. Mitra and Peter Wonka},
       year={2023},
       eprint={2312.03079},
